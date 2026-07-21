@@ -1,0 +1,788 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="HELIX: Hyperspherical Equivariant LiDAR–Image Cross-Modal Distillation for Universal Registration"
+    />
+    <meta
+      name="keywords"
+      content="LiDAR registration, cross-sensor, DINOv2, distillation, HELIX, KITTI, nuScenes, HeLiPR, PTv3"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      HELIX: Hyperspherical Equivariant LiDAR–Image Cross-Modal Distillation for Universal Registration
+    </title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
+    <link rel="stylesheet" href="./static/css/bulma.min.css" />
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+    <link rel="stylesheet" href="./static/css/index.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+
+    <style>
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .results-table th,
+      .results-table td {
+        padding: 6px 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+      .results-table th {
+        background: #f5f5f5;
+        font-weight: 600;
+      }
+      .results-table tr:hover {
+        background: #fafafa;
+      }
+      .highlight-row {
+        background: #f0f7ff !important;
+        font-weight: 600;
+      }
+      .highlight-row:hover {
+        background: #e8f0fe !important;
+      }
+      .contrib-box {
+        background: #f9f9f9;
+        border-left: 4px solid #3273dc;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1rem;
+        border-radius: 0 6px 6px 0;
+      }
+      .contrib-box strong {
+        color: #3273dc;
+      }
+      .section-divider {
+        border: none;
+        border-top: 2px solid #eee;
+        margin: 0;
+      }
+      .tag-soon {
+        background: #ffdd57;
+        color: #333;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-weight: 600;
+      }
+      .demo-video {
+        width: 100%;
+        border-radius: 6px;
+        background: #111;
+        display: block;
+      }
+      .demo-caption {
+        margin-top: 0.5rem;
+        color: #555;
+      }
+      .key-claim {
+        background: #f0f7ff;
+        padding: 1rem 1.25rem;
+        border-radius: 6px;
+        margin: 0 auto 1.5rem;
+        max-width: 52rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-body" style="padding-bottom: 1rem">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-2 publication-title" style="margin-bottom: 0.8rem">
+                HELIX: Hyperspherical Equivariant LiDAR&ndash;Image<br />
+                Cross-Modal Distillation<br />
+                for Universal Registration
+              </h1>
+
+              <div class="is-size-6 has-text-centered" style="color: #666">
+                <em>Under Review at AAAI 2027</em>
+              </div>
+
+              <div class="column has-text-centered" style="margin-top: 1rem; padding-bottom: 0">
+                <div class="buttons is-centered">
+                  <a href="./static/helix.pdf" class="button is-dark is-rounded" target="_blank">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    <span>Paper</span>
+                  </a>
+                  <span class="button is-rounded is-static" style="opacity: 0.6; cursor: default">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    <span>Code <span class="tag-soon">Soon</span></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Abstract -->
+    <section class="section" style="padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3 has-text-centered">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>
+                Learning-based global point cloud registration has achieved remarkable progress, yet existing methods rely
+                predominantly on geometric representations, making them vulnerable to variations in point density, scan
+                patterns, and viewpoints. To overcome this limitation, we propose <strong>HELIX</strong>, a robust
+                learning-based global registration framework that distills semantic priors from a vision foundation model
+                into LiDAR representations. The resulting semantic descriptors remain resilient to geometric degradation,
+                enabling consistent registration across both single- and zero-shot cross-sensor LiDAR scenarios.
+              </p>
+              <p>
+                HELIX adopts a two-stage cross-modal distillation framework with a frozen DINOv2 teacher and a Point
+                Transformer v3 (PTv3) student. Beyond contrastive distillation, we introduce
+                <em>spherical-manifold alignment</em> (&Lscr;<sub>sph</sub>), which transfers semantic knowledge while
+                respecting the hyperspherical geometry of the teacher embedding space, and
+                <em>soft SE(3) invariance</em> (&Lscr;<sub>eq</sub>), which encourages viewpoint-invariant descriptors.
+                Using a single model, HELIX generalizes across diverse LiDAR sensors without sensor-specific adaptation
+                while remaining entirely camera-free at inference. On KITTI, nuScenes, and HeLiPR, it achieves strict
+                recall (SR@0.5&nbsp;m/1&deg;) of <strong>97.84%</strong>, <strong>99.2%</strong>, and
+                <strong>95.8%</strong>, respectively&mdash;including <strong>94.7%</strong> on sparse 16-beam Velodyne
+                scans, outperforming BUFFER-X by up to <strong>41.4</strong> percentage points.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaser before/after -->
+    <section class="section" style="padding-top: 0; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <div class="key-claim has-text-centered">
+          <p class="is-size-5" style="font-weight: 500; margin-bottom: 0">
+            One checkpoint &middot; camera-free inference &middot; zero-shot cross-sensor registration<br />
+            <span class="is-size-6" style="font-weight: 400; color: #444">
+              Strict SR@0.5&nbsp;m/1&deg;: KITTI 97.84% &middot; nuScenes 99.2% &middot; HeLiPR 95.8%
+              (Velodyne-16: 94.7%)
+            </span>
+          </p>
+        </div>
+        <h3 class="title is-3 has-text-centered">Cross-Sensor Registration</h3>
+        <p class="has-text-centered is-size-6" style="margin-bottom: 1rem; color: #555">
+          HeLiPR Velodyne VLP-16 query (orange) overlaid on an Ouster-128 reference map (blue), before and after HELIX.
+        </p>
+        <div class="columns is-centered is-vcentered">
+          <div class="column is-half has-text-centered">
+            <figure class="image">
+              <img
+                src="./static/images/f4_before.png"
+                alt="Before HELIX registration"
+                style="max-width: 100%; border-radius: 6px"
+              />
+            </figure>
+            <figcaption class="demo-caption is-size-7">Before registration</figcaption>
+          </div>
+          <div class="column is-half has-text-centered">
+            <figure class="image">
+              <img
+                src="./static/images/f5_after.png"
+                alt="After HELIX registration"
+                style="max-width: 100%; border-radius: 6px"
+              />
+            </figure>
+            <figcaption class="demo-caption is-size-7">After HELIX (mRANSAC + LGR, no ICP)</figcaption>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Demo gallery -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Registration Demos</h3>
+        <p class="has-text-centered is-size-6" style="margin-bottom: 1.25rem; color: #555">
+          HELIX aligns query scans onto reference maps across in-distribution (KITTI) and zero-shot cross-sensor
+          (HeLiPR) settings. Videos loop automatically.
+        </p>
+
+        <div class="columns is-multiline is-centered">
+          <div class="column is-half has-text-centered">
+            <video class="demo-video" autoplay muted loop playsinline controls>
+              <source src="./static/demo/kitti_seq08_f3013.mp4" type="video/mp4" />
+            </video>
+            <figcaption class="demo-caption is-size-7">
+              <strong>KITTI Seq. 08</strong> &mdash; Velodyne HDL-64E in-distribution pair
+            </figcaption>
+          </div>
+
+          <div class="column is-half has-text-centered">
+            <video class="demo-video" autoplay muted loop playsinline controls>
+              <source src="./static/demo/velodyne_dcc05_q150.mp4" type="video/mp4" />
+            </video>
+            <figcaption class="demo-caption is-size-7">
+              <strong>HeLiPR &middot; Velodyne VLP-16</strong> &mdash; sparse 16-beam query vs. Ouster-128 map
+              (zero-shot)
+            </figcaption>
+          </div>
+
+          <div class="column is-half has-text-centered">
+            <video class="demo-video" autoplay muted loop playsinline controls>
+              <source src="./static/demo/avia_river05_q090.mp4" type="video/mp4" />
+            </video>
+            <figcaption class="demo-caption is-size-7">
+              <strong>HeLiPR &middot; Livox Avia</strong> &mdash; non-repetitive solid-state scan pattern (zero-shot)
+            </figcaption>
+          </div>
+
+          <div class="column is-half has-text-centered">
+            <video class="demo-video" autoplay muted loop playsinline controls>
+              <source src="./static/demo/aeva_river05_q220.mp4" type="video/mp4" />
+            </video>
+            <figcaption class="demo-caption is-size-7">
+              <strong>HeLiPR &middot; Aeva FMCW</strong> &mdash; radar-LiDAR style returns (zero-shot)
+            </figcaption>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Key contributions -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Key Contributions</h3>
+        <div class="columns is-multiline" style="margin-top: 0.5rem">
+          <div class="column is-half">
+            <div class="contrib-box">
+              <strong>Spherical-manifold distillation</strong><br />
+              Transfer DINOv2 priors into a PTv3 student via hyperspherical alignment (&Lscr;<sub>sph</sub>), optimizing
+              geodesic angles rather than flat Euclidean proxies to preserve foundation-model geometry on sparse scans.
+            </div>
+          </div>
+          <div class="column is-half">
+            <div class="contrib-box">
+              <strong>Soft SE(3) invariance</strong><br />
+              Stacked dual-view forward pass with InfoNCE (&Lscr;<sub>infonce</sub>) and soft equivariance
+              (&Lscr;<sub>eq</sub>) keeps descriptors stable under rigid viewpoint shifts without hard architectural
+              constraints.
+            </div>
+          </div>
+          <div class="column is-half">
+            <div class="contrib-box">
+              <strong>Unified camera-free deployment</strong><br />
+              Distill once during training; at inference run a single LiDAR-only checkpoint with built-in mini-RANSAC +
+              LGR&mdash;no cameras, no ICP, no external certifiable solvers.
+            </div>
+          </div>
+          <div class="column is-half">
+            <div class="contrib-box">
+              <strong>Zero-shot cross-sensor recall</strong><br />
+              Density-aware point dropout and KITTI/nuScenes mixing yield leading HeLiPR strict recall, including
+              +41.4&nbsp;pp over BUFFER-X on Velodyne-16.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Stage-1 -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Stage-1: Cross-Modal Distillation</h3>
+        <div class="has-text-centered" style="margin-bottom: 1rem">
+          <figure class="image">
+            <img
+              src="./static/images/f1_stage1.png"
+              alt="HELIX Stage-1 distillation pipeline"
+              style="max-width: 100%; margin: 0 auto; border-radius: 4px"
+            />
+          </figure>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            <strong>Teacher branch:</strong> dense DINOv2 patch features are lifted onto visible LiDAR points via
+            projective geometry and bilinear interpolation. <strong>Student branch:</strong> a trainable PTv3 backbone
+            encodes the original scan <em>P<sub>A</sub></em> and an SE(3)-augmented view <em>P<sub>B</sub></em> in one
+            stacked pseudo-batch. Joint objectives combine cross-modal alignment
+            (&Lscr;<sub>distill</sub>, &Lscr;<sub>sph</sub>) inside the visibility mask &Mscr; with self-supervised
+            perspective consistency (&Lscr;<sub>infonce</sub>, &Lscr;<sub>eq</sub>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Distillation quality -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Distillation Quality (PCA Feature Map)</h3>
+        <div class="has-text-centered">
+          <figure class="image">
+            <img
+              src="./static/images/f3_distill_feature.png"
+              alt="Cross-modal feature distillation visualization"
+              style="max-width: 100%; margin: 0 auto; border-radius: 4px"
+            />
+          </figure>
+          <figcaption
+            class="has-text-centered is-size-7"
+            style="margin-top: 0.5rem; max-width: 820px; margin-left: auto; margin-right: auto; color: #555"
+          >
+            <strong>(a)</strong> DINOv2 features on RGB (CAM_FRONT).
+            <strong>(b)</strong> Lifted teacher features on LiDAR (gray = occlusion-masked).
+            <strong>(c)</strong> Randomly initialized student.
+            <strong>(d)</strong> Distilled student recovers semantically consistent topologies.
+          </figcaption>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Stage-2 -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Stage-2: Pairwise Registration Fine-Tuning</h3>
+        <div class="has-text-centered" style="margin-bottom: 1rem">
+          <figure class="image">
+            <img
+              src="./static/images/f2_stage2.png"
+              alt="HELIX Stage-2 registration pipeline"
+              style="max-width: 100%; margin: 0 auto; border-radius: 4px"
+            />
+          </figure>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            After pretraining, the 2D teacher is removed. A weight-shared PTv3 extracts descriptors from query/target
+            scans; FPS selects superpoints, mutual nearest neighbors with a confidence head form correspondences, and a
+            differentiable Kabsch solver regresses the relative pose. Point-dropout augmentation bridges the density gap
+            to sparse sensors (e.g., Velodyne-16). Inference uses a built-in mini-RANSAC initializer and local geometric
+            refinement (LGR)&mdash;no cameras, no ICP.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Qualitative HeLiPR -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Qualitative Results on HeLiPR</h3>
+        <div class="has-text-centered">
+          <figure class="image">
+            <img
+              src="./static/images/f6_qualitative_helipr.png"
+              alt="Qualitative HeLiPR cross-sensor registration results"
+              style="max-width: 100%; margin: 0 auto; border-radius: 4px"
+            />
+          </figure>
+          <figcaption
+            class="has-text-centered is-size-7"
+            style="margin-top: 0.5rem; max-width: 820px; margin-left: auto; margin-right: auto; color: #555"
+          >
+            Zero-shot cross-sensor overlays on HeLiPR. Sparse and unconventional query patterns (Velodyne-16, Avia, Aeva)
+            align to the Ouster-128 reference without sensor-specific fine-tuning.
+          </figcaption>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Results -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Experimental Results</h3>
+        <p class="is-size-6 has-text-justified" style="max-width: 48rem; margin: 0 auto 1rem; color: #555">
+          A single HELIX checkpoint and unified inference recipe (built-in mini-RANSAC + LGR, no ICP) are evaluated on
+          KITTI, nuScenes, and zero-shot HeLiPR. Primary metric: strict success rate SR@0.5&nbsp;m/1&deg;.
+        </p>
+
+        <!-- KITTI -->
+        <h4 class="title is-5" style="margin-top: 1.5rem">KITTI Odometry</h4>
+        <div style="overflow-x: auto">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>SR@2m/5&deg;</th>
+                <th>SR@1m/2&deg;</th>
+                <th>SR@0.5m/1&deg;</th>
+                <th>RTE (m) &darr;</th>
+                <th>RRE (&deg;) &darr;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FPFH + TEASER</td>
+                <td>98.74</td>
+                <td>97.66</td>
+                <td>92.25</td>
+                <td>0.070</td>
+                <td>0.295</td>
+              </tr>
+              <tr>
+                <td>RAP</td>
+                <td>97.12</td>
+                <td>93.51</td>
+                <td>81.80</td>
+                <td>0.263</td>
+                <td>0.366</td>
+              </tr>
+              <tr>
+                <td>KISS-Matcher</td>
+                <td>97.12</td>
+                <td>87.75</td>
+                <td>66.31</td>
+                <td>0.140</td>
+                <td>0.723</td>
+              </tr>
+              <tr>
+                <td>UGP</td>
+                <td>99.82</td>
+                <td>99.64</td>
+                <td>97.66</td>
+                <td>0.060</td>
+                <td>0.189</td>
+              </tr>
+              <tr>
+                <td>PARE-Net</td>
+                <td>99.82</td>
+                <td>99.64</td>
+                <td>97.66</td>
+                <td>0.040</td>
+                <td>0.172</td>
+              </tr>
+              <tr>
+                <td>GeoTransformer</td>
+                <td>99.82</td>
+                <td>99.64</td>
+                <td>97.66</td>
+                <td>0.054</td>
+                <td>0.173</td>
+              </tr>
+              <tr>
+                <td>CAST</td>
+                <td>100.00</td>
+                <td>100.00</td>
+                <td>99.28</td>
+                <td>0.023</td>
+                <td>0.125</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>HELIX (Ours)</strong></td>
+                <td><strong>99.82</strong></td>
+                <td><strong>99.64</strong></td>
+                <td><strong>97.84</strong></td>
+                <td><strong>0.053</strong></td>
+                <td><strong>0.172</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-centered" style="margin-top: 0.3rem; color: #888">
+          Sequences 08&ndash;10 (555 pairs). HELIX remains competitive with specialist geometric matchers on
+          in-distribution 64-beam data.
+        </p>
+
+        <!-- nuScenes -->
+        <h4 class="title is-5" style="margin-top: 2rem">nuScenes</h4>
+        <div style="overflow-x: auto">
+          <table class="results-table" style="max-width: 720px; margin: 0 auto">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>SR@2m/5&deg;</th>
+                <th>SR@1m/2&deg;</th>
+                <th>SR@0.5m/1&deg;</th>
+                <th>RTE (m) &darr;</th>
+                <th>RRE (&deg;) &darr;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FPFH + TEASER</td>
+                <td>87.4</td>
+                <td>87.4</td>
+                <td>85.6</td>
+                <td>0.090</td>
+                <td>0.302</td>
+              </tr>
+              <tr>
+                <td>KISS-Matcher</td>
+                <td>78.4</td>
+                <td>77.2</td>
+                <td>67.8</td>
+                <td>0.124</td>
+                <td>0.523</td>
+              </tr>
+              <tr>
+                <td>GeoTransformer</td>
+                <td>99.4</td>
+                <td>98.6</td>
+                <td>97.0</td>
+                <td>0.080</td>
+                <td>0.239</td>
+              </tr>
+              <tr>
+                <td>BUFFER-X</td>
+                <td>92.6</td>
+                <td>90.6</td>
+                <td>89.6</td>
+                <td>0.113</td>
+                <td>0.294</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>HELIX (Ours)</strong></td>
+                <td><strong>100.0</strong></td>
+                <td><strong>100.0</strong></td>
+                <td><strong>99.2</strong></td>
+                <td><strong>0.078</strong></td>
+                <td>0.249</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-centered" style="margin-top: 0.3rem; color: #888">
+          500 validation key-frame pairs (1&ndash;5&nbsp;m gap). HELIX leads on all three success-rate thresholds.
+        </p>
+
+        <!-- HeLiPR -->
+        <h4 class="title is-5" style="margin-top: 2rem">HeLiPR &mdash; Zero-Shot Cross-Sensor</h4>
+        <p class="is-size-6 has-text-justified" style="max-width: 48rem; margin: 0 auto 0.75rem; color: #555">
+          Held-out KAIST05 / DCC05 / RIVER05 (600 pairs). Reference maps from Ouster-128; queries from Velodyne-16,
+          Livox Avia, Aeva FMCW, and in-distribution Ouster. HeLiPR is never seen during HELIX training.
+        </p>
+        <div style="overflow-x: auto">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th colspan="4">SR@0.5m/1&deg; (%) &uarr;</th>
+                <th colspan="4">SR@1m/2&deg; (%) &uarr;</th>
+                <th rowspan="2">Med. RTE (m) &darr;</th>
+              </tr>
+              <tr>
+                <th>Ouster</th>
+                <th>Vel-16</th>
+                <th>Avia</th>
+                <th>Aeva</th>
+                <th>Ouster</th>
+                <th>Vel-16</th>
+                <th>Avia</th>
+                <th>Aeva</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FPFH + TEASER</td>
+                <td>100.0</td>
+                <td>2.5</td>
+                <td>30.0</td>
+                <td>60.0</td>
+                <td>100.0</td>
+                <td>16.2</td>
+                <td>53.3</td>
+                <td>86.7</td>
+                <td>1.080</td>
+              </tr>
+              <tr>
+                <td>KISS-Matcher</td>
+                <td>100.0</td>
+                <td>6.2</td>
+                <td>31.2</td>
+                <td>1.2</td>
+                <td>100.0</td>
+                <td>36.2</td>
+                <td>70.0</td>
+                <td>45.0</td>
+                <td>0.515</td>
+              </tr>
+              <tr>
+                <td>RAP</td>
+                <td>100.0</td>
+                <td>93.8</td>
+                <td>12.5</td>
+                <td>11.2</td>
+                <td>100.0</td>
+                <td>93.8</td>
+                <td>46.2</td>
+                <td>43.8</td>
+                <td>1.061</td>
+              </tr>
+              <tr>
+                <td>CAST</td>
+                <td>100.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>100.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>6.115</td>
+              </tr>
+              <tr>
+                <td>GeoTransformer</td>
+                <td>100.0</td>
+                <td>60.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>100.0</td>
+                <td>80.0</td>
+                <td>0.0</td>
+                <td>0.0</td>
+                <td>0.164</td>
+              </tr>
+              <tr>
+                <td>UGP</td>
+                <td>100.0</td>
+                <td>18.8</td>
+                <td>45.0</td>
+                <td>15.0</td>
+                <td>100.0</td>
+                <td>78.8</td>
+                <td>56.2</td>
+                <td>37.5</td>
+                <td>0.470</td>
+              </tr>
+              <tr>
+                <td>PARE-Net</td>
+                <td>78.8</td>
+                <td>52.5</td>
+                <td>37.5</td>
+                <td>27.5</td>
+                <td>100.0</td>
+                <td>61.3</td>
+                <td>55.0</td>
+                <td>43.8</td>
+                <td>0.535</td>
+              </tr>
+              <tr>
+                <td>BUFFER-X</td>
+                <td>100.0</td>
+                <td>53.3</td>
+                <td>82.7</td>
+                <td>94.0</td>
+                <td>100.0</td>
+                <td>91.3</td>
+                <td>100.0</td>
+                <td>99.3</td>
+                <td>0.269</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>HELIX (Ours)</strong></td>
+                <td><strong>100.0</strong></td>
+                <td><strong>94.7</strong></td>
+                <td><strong>90.0</strong></td>
+                <td><strong>98.7</strong></td>
+                <td><strong>100.0</strong></td>
+                <td><strong>95.3</strong></td>
+                <td>91.3</td>
+                <td>98.7</td>
+                <td><strong>0.118</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-centered" style="margin-top: 0.3rem; color: #888">
+          Gains vs. BUFFER-X at strict threshold: Velodyne-16 <strong>+41.4&nbsp;pp</strong>, Avia
+          <strong>+7.3&nbsp;pp</strong>, Aeva <strong>+4.7&nbsp;pp</strong>. Median RTE reduced from 0.269&nbsp;m to
+          0.118&nbsp;m. Overall HeLiPR strict recall: <strong>95.8%</strong>.
+        </p>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Ablation -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">Ablation Study</h3>
+        <p class="is-size-6 has-text-centered" style="margin-bottom: 1rem; color: #555">
+          Stage-1 loss ablation on a 280-pair HeLiPR subset (strict SR@0.5&nbsp;m/1&deg;).
+        </p>
+        <div style="overflow-x: auto">
+          <table class="results-table" style="max-width: 640px; margin: 0 auto">
+            <thead>
+              <tr>
+                <th>Configuration</th>
+                <th>Overall</th>
+                <th>Vel-16</th>
+                <th>Avia</th>
+                <th>Aeva</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>&Lscr;<sub>distill</sub></td>
+                <td>87.3</td>
+                <td>68.3</td>
+                <td>83.6</td>
+                <td>90.7</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;+ &Lscr;<sub>eq</sub></td>
+                <td>89.5</td>
+                <td>76.0</td>
+                <td>87.2</td>
+                <td>89.8</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;+ &Lscr;<sub>sph</sub></td>
+                <td>89.1</td>
+                <td>81.5</td>
+                <td>88.0</td>
+                <td>87.1</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>Full HELIX (Ours)</strong></td>
+                <td><strong>91.1</strong></td>
+                <td><strong>85.0</strong></td>
+                <td><strong>91.6</strong></td>
+                <td><strong>88.9</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-centered" style="margin-top: 0.3rem; color: #888">
+          &Lscr;<sub>sph</sub> particularly helps sparse Velodyne (+13.2&nbsp;pp over distill alone);
+          &Lscr;<sub>eq</sub> improves overall stability. The full joint objective yields the best recall
+          (+3.8&nbsp;pp).
+        </p>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- BibTeX -->
+    <section class="section" style="padding-top: 1.5rem; padding-bottom: 2rem">
+      <div class="container is-max-desktop">
+        <h3 class="title is-3 has-text-centered">BibTeX</h3>
+        <div class="content">
+          <pre
+            style="background: #f5f5f5; padding: 1rem; border-radius: 6px; font-size: 0.85rem; overflow-x: auto"
+          ><code>@article{helix2027,
+  title={HELIX: Hyperspherical Equivariant LiDAR–Image Cross-Modal Distillation for Universal Registration},
+  author={Anonymous},
+  journal={Under review at AAAI 2027},
+  year={2027}
+}</code></pre>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
